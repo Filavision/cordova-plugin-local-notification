@@ -219,14 +219,12 @@ public final class Notification {
             if (!date.after(new Date()) && trigger(intent, receiver))
                 continue;
 
-            PendingIntent pi = null;
+            int flags = FLAG_UPDATE_CURRENT;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                    pi = PendingIntent.getBroadcast(
-                        context, 0, intent, PendingIntent.FLAG_IMMUTABLE | FLAG_CANCEL_CURRENT);
-            } else {
-                    pi = PendingIntent.getBroadcast(
-                        context, 0, intent, FLAG_CANCEL_CURRENT);
+                flags = PendingIntent.FLAG_MUTABLE | FLAG_UPDATE_CURRENT;
             }
+            
+            PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, flags);
 
             try {
                 switch (options.getPrio()) {
@@ -328,14 +326,12 @@ public final class Notification {
         for (String action : actions) {
             Intent intent = new Intent(action);
 
-            PendingIntent pi = null;
+            int flags = FLAG_CANCEL_CURRENT;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                pi = PendingIntent.getBroadcast(
-                    context, 0, intent, PendingIntent.FLAG_IMMUTABLE  );
-            } else {
-                pi = PendingIntent.getBroadcast(
-                    context, 0, intent, 0);
+                flags = PendingIntent.FLAG_MUTABLE | FLAG_CANCEL_CURRENT;
             }
+
+            PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, flags);
 
             if (pi != null) {
                 getAlarmMgr().cancel(pi);
